@@ -34,8 +34,8 @@ export type Task = {
   meetingId: string;
   /** Short description of the work to be done. */
   title: string;
-  /** Identifier of the meeting member responsible for the task. */
-  ownerId: string;
+  /** Responsible member's ID, or null if the member was removed. */
+  ownerId: string | null;
   /** Date the task is due, in YYYY-MM-DD format. */
   dueDate: string;
   /** Whether the task is still open or has been completed. */

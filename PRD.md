@@ -104,6 +104,15 @@ The one flow that must work from start to finish.
 - **Main action:** Add a task to the meeting page.
 - **Leads to:** The updated meeting page.
 
+**Member settings**
+
+- **User type:** Studio organizer
+- **Purpose:** Maintain the meeting's member list and access member links.
+- **Elements:** Members, add and delete actions, and a copy-link action for
+  each member.
+- **Main action:** Add or remove a meeting member.
+- **Leads to:** The updated member list or the meeting page.
+
 **Member task view**
 
 - **User type:** Studio member
@@ -121,6 +130,8 @@ The one flow that must work from start to finish.
 
 - Create a page for a meeting or upcoming studio event.
 - Add members during the meeting so they can be assigned tasks.
+- Allow an organizer to remove a member; their tasks remain and become
+  unassigned until another member is selected.
 - Add tasks with a task name, owner, and due date.
 - Display all tasks and their open or done status on the shared page.
 - Provide one public meeting link and member-specific links that open directly
@@ -149,7 +160,8 @@ What the app stores or sends.
 
 - **Meeting page:** Unique identifier, title, optional event date, creator,
   public shareable link, and organizer contact information.
-- **Task:** Unique identifier, meeting page, title, owner, due date, status
+- **Task:** Unique identifier, meeting page, title, owner (or unassigned after
+  member removal), due date, status
   (`open` or `done`), and created/updated timestamps.
 - **Member:** Unique identifier, display name, meeting page, and optional
   contact information. Authentication and full profiles are not required for

@@ -11,3 +11,11 @@
   with field descriptions and both open and completed tasks.
 - **2026-11-24:** Added the task form and connected the meeting board to sample
   data; tasks can be added in memory for the current page session.
+- **2026-11-24:** Simplified the meeting board and add-task form to follow the
+  wireframe layout, preserving sample task creation and completion controls.
+- **2026-11-24:** Added member settings for adding and deleting members;
+  deleted members' tasks become unassigned and can be reassigned.
+- **2026-11-24:** Moved the unassigned-task member selector into the task's
+  owner position.
+- **2026-11-24:** Enabled changing assigned members directly from the task
+  board using the member selector.

@@ -11,7 +11,7 @@ type AddTaskFormProps = {
 };
 
 const fieldClassName =
-  "mt-2 h-12 w-full rounded-xl border border-[#cfdad2] bg-white px-3 text-sm text-[#24352f] outline-none focus-visible:border-[#2f6555] focus-visible:ring-2 focus-visible:ring-[#a9c7b5]";
+  "mt-2 h-12 w-full rounded-lg border border-neutral-400 bg-white px-3 text-sm text-neutral-950 outline-none focus-visible:border-neutral-900 focus-visible:ring-2 focus-visible:ring-neutral-400";
 
 export function AddTaskForm({ members, onCancel, onSave }: AddTaskFormProps) {
   const [titleError, setTitleError] = useState("");
@@ -38,12 +38,11 @@ export function AddTaskForm({ members, onCancel, onSave }: AddTaskFormProps) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-xl py-8 sm:py-12" aria-labelledby="add-task-heading">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#718078]">Meeting commitments</p>
-      <h1 id="add-task-heading" className="mt-3 text-3xl font-semibold tracking-[-0.04em]">Add a task</h1>
-      <p className="mt-2 text-sm text-[#718078]">Record what needs doing and who will take care of it.</p>
+    <section className="w-full pt-10" aria-labelledby="add-task-heading">
+      <h1 id="add-task-heading" className="text-2xl font-semibold">Add a task</h1>
+      <p className="mt-2 text-sm text-neutral-600">Record what needs doing and who will take care of it.</p>
 
-      <form onSubmit={handleSubmit} className="mt-7 space-y-5 rounded-2xl border border-[#e0e5e1] bg-white p-5 shadow-[0_8px_30px_rgba(47,76,61,0.04)] sm:p-7">
+      <form onSubmit={handleSubmit} className="mt-7 space-y-5">
         <div>
           <label htmlFor="task-title" className="text-sm font-semibold">Task name</label>
           <input
@@ -77,10 +76,10 @@ export function AddTaskForm({ members, onCancel, onSave }: AddTaskFormProps) {
           <input id="task-due-date" name="dueDate" type="date" required className={fieldClassName} />
         </div>
 
-        <p className="text-xs leading-5 text-[#718078]">This sample meeting is temporary. Changes are lost when you refresh.</p>
+        <p className="text-xs leading-5 text-neutral-600">This sample meeting is temporary. Changes are lost when you refresh.</p>
         <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" className="h-11 rounded-xl border-[#cfdad2] bg-white px-5 text-[#36564b]" onClick={onCancel}>Cancel</Button>
-          <Button type="submit" className="h-11 rounded-xl bg-[#2f6555] px-5 text-white hover:bg-[#245345]">Add task</Button>
+          <Button type="button" variant="outline" className="h-11 rounded-lg border-2 border-neutral-900 bg-white px-5 text-neutral-950" onClick={onCancel}>Cancel</Button>
+          <Button type="submit" className="h-11 rounded-lg bg-neutral-900 px-5 text-white hover:bg-neutral-700">Add task</Button>
         </div>
       </form>
     </section>

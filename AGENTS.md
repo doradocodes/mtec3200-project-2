@@ -83,6 +83,7 @@ in sync when a dependency is approved.
   sends links and reminders by text.
 - After every code change, add a dated entry to `PROGRESS.md` describing what
   changed.
+- Create code comments that allows to search my codebase quickly using keywords.
 
 ## Platform rules
 
