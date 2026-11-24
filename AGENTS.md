@@ -34,7 +34,7 @@ Read `PRD.md` before starting any task.
 - Next.js `next/font` with Geist fonts
 - Supabase is the planned database for persisted meeting, member, and task
   records, but it is not installed yet
-- shadcn/ui is not installed yet
+- shadcn/ui 4.23.0 with the Base UI preset
 - Deployment target: Vercel
 
 ## Commands
@@ -91,8 +91,8 @@ in sync when a dependency is approved.
 - Design for phone width first, then ensure the layout works on desktop.
 - Use the existing Next.js App Router conventions.
 - Use Tailwind CSS for styling and follow the existing global styles.
-- Use shadcn/ui components if the dependency is later approved and installed;
-  do not hand-roll a replacement component library.
+- Use shadcn/ui components from `components/ui/` before building custom
+  replacements.
 - Provide clear loading, empty, and error states for data-driven screens.
 - Preserve accessible labels, keyboard interaction, and sufficient color
   contrast.

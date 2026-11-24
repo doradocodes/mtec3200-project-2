@@ -37,7 +37,7 @@ desktop. It is deployed to [Vercel](https://vercel.com/).
 - Next.js `next/font` with Geist fonts
 - Supabase is planned for persisted meeting, member, and task records but is
   not installed yet
-- shadcn/ui is not installed yet
+- shadcn/ui 4.23.0 with the Base UI preset
 
 ## Getting Started
 
