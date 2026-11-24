@@ -7,3 +7,5 @@
   generated component configuration, button component, and utility helper.
 - **2026-11-24:** Updated home-screen controls to use the shadcn/ui Button
   component while retaining their existing styles and task toggle behavior.
+- **2026-11-24:** Added typed fictional meeting, member, and task sample data
+  with field descriptions and both open and completed tasks.
