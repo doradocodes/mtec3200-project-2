@@ -49,9 +49,9 @@ wall, stakeholder map, and comparative analysis in `docs/`.
   agrees to help with recurring work or an upcoming event.
 - **Goal:** Quickly find the tasks assigned to them, understand what is due,
   and mark work complete.
-- **Context:** They may be on a phone between work shifts or at home, and are
-  unlikely to search through a long group chat or open a complex project
-  management tool.
+- **Context:** They may be on a phone between work shifts or at home. The
+  organizer adds them during the meeting and sends them a link that opens
+  directly to their assigned tasks.
 
 **Studio organizer**
 
@@ -75,12 +75,13 @@ wall, stakeholder map, and comparative analysis in `docs/`.
 The one flow that must work from start to finish.
 
 1. After a studio meeting, the organizer creates a meeting page and adds each
-   task with an owner and due date.
-2. The organizer copies and shares the page link with members.
-3. A member opens the link and finds their assigned task(s) in the shared
+   member and task with an owner and due date.
+2. The organizer copies a member-specific link and sends it to that member.
+3. The member opens the link and lands on their assigned task(s) in the shared
    list.
 4. The member marks a task done, and the updated status is visible to
-   everyone.
+   everyone. If the task needs to change, the member contacts the organizer
+   directly.
 
 ## Screens
 
@@ -88,8 +89,9 @@ The one flow that must work from start to finish.
 
 - **User type:** Studio organizer and studio member
 - **Purpose:** Provide one visible source of truth for a meeting's commitments.
-- **Elements:** Meeting or event title; task list; task name; owner; due date;
-  open or done status; add-task control for the organizer; share-link control.
+- **Elements:** Meeting or event title; member list; task list; task name;
+  owner; due date; open or done status; add-member and add-task controls for
+  the organizer; member-specific share-link controls.
 - **Main action:** Review the task list and, for an assigned task, mark it done.
 - **Leads to:** The member task view or the updated shared task board.
 
@@ -97,8 +99,8 @@ The one flow that must work from start to finish.
 
 - **User type:** Studio organizer
 - **Purpose:** Record a commitment immediately after the meeting.
-- **Elements:** Task name field; owner selector or owner name; due date; save
-  action; cancel action.
+- **Elements:** Task name field; owner selector from the meeting's member list;
+  due date; save action; cancel action.
 - **Main action:** Add a task to the meeting page.
 - **Leads to:** The updated meeting page.
 
@@ -108,7 +110,8 @@ The one flow that must work from start to finish.
 - **Purpose:** Reduce scanning by showing the member the work specifically
   assigned to them.
 - **Elements:** Member name; assigned task list; task status controls; due
-  dates; link back to the full meeting page.
+  dates; link back to the full public meeting page; organizer contact
+  information or instructions for assignment changes.
 - **Main action:** Mark an assigned task done.
 - **Leads to:** The updated member task view and shared meeting page.
 
@@ -117,15 +120,17 @@ The one flow that must work from start to finish.
 **Must-have (MVP):**
 
 - Create a page for a meeting or upcoming studio event.
+- Add members during the meeting so they can be assigned tasks.
 - Add tasks with a task name, owner, and due date.
 - Display all tasks and their open or done status on the shared page.
-- Provide a shareable link that members can open without installing an app.
+- Provide one public meeting link and member-specific links that open directly
+  to each member's assigned tasks.
 - Let a member mark their task done and persist the updated status.
 - Show members their assigned tasks clearly.
 
 **Nice to have, but not MVP:**
 
-- Reminders or notifications for open tasks.
+- Automated reminders or notifications for open tasks.
 - Member profiles and reusable studio rosters.
 - Task history or an audit trail.
 - Quick replies or reactions, inspired by group chat.
@@ -142,29 +147,33 @@ The one flow that must work from start to finish.
 
 What the app stores or sends.
 
-- **Meeting page:** Unique identifier, title, optional event date, creator, and
-  shareable link.
+- **Meeting page:** Unique identifier, title, optional event date, creator,
+  public shareable link, and organizer contact information.
 - **Task:** Unique identifier, meeting page, title, owner, due date, status
   (`open` or `done`), and created/updated timestamps.
-- **Member:** Display name associated with assigned tasks. Authentication and
-  full profiles are not required for the MVP.
+- **Member:** Unique identifier, display name, meeting page, and optional
+  contact information. Authentication and full profiles are not required for
+  the MVP.
 
-The app sends task creation and status updates to the server and returns the
-current shared task list to viewers.
+The app sends member, task, and status updates to the server and returns the
+current shared task list to viewers. Member-specific URLs may use a query
+parameter to select the member's task view.
 
 ## Technical requirements
 
 - Responsive web interface designed for phone width first and usable on
   desktop.
 - Next.js with the App Router, using the existing project setup.
-- Persist meeting pages and task records in a database so updates are visible
+- Use Supabase for database storage when persistence is required.
+- Persist meeting pages, members, and task records so updates are visible
   across devices.
-- Provide stable, shareable URLs for meeting pages.
-- Support the organizer actions of creating a page and adding tasks, and the
-  member action of updating task status.
+- Provide one public URL per meeting and member-specific task links using a
+  query parameter or equivalent URL state.
+- Support organizer actions of creating a page, adding members, adding tasks,
+  and sharing links, plus the member action of updating task status.
 - Use clear open, loading, and error states for page loading and task updates.
-- Do not require account creation for a member to open a shared page; access
-  control and authentication can be evaluated after the MVP.
+- All meeting pages are public for the MVP. Do not require account creation
+  or authentication to open a page or member task link.
 
 ## Success criteria
 
@@ -176,6 +185,7 @@ current shared task list to viewers.
   page and are visible from another device or browser session.
 - An organizer can identify all open tasks for a meeting without searching a
   group chat or messaging members individually.
+- A member-specific link opens directly to that member's assigned tasks.
 
 ## Milestones
 
@@ -192,17 +202,19 @@ first milestone is the home screen / initial meeting-page experience.
 
 **Milestone 2: Create and add tasks**
 
-- **What gets built:** Meeting-page creation and add-task form with task name,
-  owner, and due date fields.
-- **Done when:** An organizer can create a page and add a task that appears in
-  the list with the correct owner and due date.
+- **What gets built:** Meeting-page creation, add-member form, and add-task
+  form with task name, owner, and due date fields.
+- **Done when:** An organizer can create a page, add a member, and add a task
+  that appears in the list with the correct owner and due date.
 
 **Milestone 3: Persistence and sharing**
 
-- **What gets built:** Database-backed meeting and task records, stable page
-  URLs, and share-link action.
-- **Done when:** An organizer can copy one link, and another browser can open
-  that link and see the same page and tasks after a refresh.
+- **What gets built:** Supabase-backed meeting, member, and task records,
+  stable public meeting URLs, member-specific task URLs, and share-link
+  actions.
+- **Done when:** An organizer can copy the public meeting link or a
+  member-specific link, and another browser can open it and see the expected
+  page or assigned tasks after a refresh.
 
 **Milestone 4: Member completion**
 
@@ -225,24 +237,16 @@ first milestone is the home screen / initial meeting-page experience.
 - Members will prefer a focused task page to a general-purpose tool if the
   page is easy to open and requires little maintenance.
 - Organizers will consistently enter meeting commitments after meetings.
-- A shareable link is sufficient for the first release, even without
-  authentication or role-based permissions.
-- Without reminders, tasks may again become invisible; reminder delivery is a
-  key post-MVP risk to validate.
-- Shared links may expose studio task information to anyone who receives the
-  link; access controls should be addressed before using the product for
-  sensitive information.
+- Organizer-sent text messages are sufficient to get members to open their
+  member-specific links for the MVP.
+- Public pages are acceptable for initial use. Anyone with a link can view the
+  meeting and task information, so sensitive information should not be stored.
 
 ## Open questions
 
-- Should meeting pages be private by default, or should anyone with the link
-  be able to view and update tasks?
-- How should a member identify themselves when opening a shared link?
-- Should an owner be allowed to change or decline an assignment after the
-  meeting?
-- What reminder channel would members actually use: email, text, or an
-  in-app reminder?
-- Should one studio have multiple meeting pages and a home/index page, or is
-  one link per meeting sufficient for the MVP?
-- What exact database and deployment configuration is required by the Project 2
-  brief?
+- Should public viewers be able to mark any task done, or should the MVP use
+  the member-specific link only as a lightweight ownership convention?
+- What organizer contact detail should appear when a member needs to request
+  an assignment change?
+- Should the MVP include a simple copy-link button only, or direct integration
+  with the phone's text-message composer?
