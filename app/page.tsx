@@ -3,66 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { AddTaskForm } from "@/components/add-task-form";
+import { sampleMeeting, sampleMembers, sampleTasks, type Task } from "@/lib/sample-data";
 
-type Task = {
-  id: number;
-  title: string;
-  owner: string;
-  due: string;
-  dueLabel: string;
-  completed: boolean;
-  color: string;
-  initials: string;
-};
-
-const initialTasks: Task[] = [
-  {
-    id: 1,
-    title: "Buy tablecloths",
-    owner: "Dora",
-    due: "Nov 14",
-    dueLabel: "Due in 2 days",
-    completed: false,
-    color: "bg-[#f1c99b]",
-    initials: "DO",
-  },
-  {
-    id: 2,
-    title: "Print event flyers",
-    owner: "Pablo",
-    due: "Nov 12",
-    dueLabel: "Due today",
-    completed: false,
-    color: "bg-[#b8cdb5]",
-    initials: "PA",
-  },
-  {
-    id: 3,
-    title: "Set up the front table",
-    owner: "Dora",
-    due: "Nov 16",
-    dueLabel: "Due in 4 days",
-    completed: false,
-    color: "bg-[#f1c99b]",
-    initials: "DO",
-  },
-  {
-    id: 4,
-    title: "Confirm the drink order",
-    owner: "Mina",
-    due: "Nov 10",
-    dueLabel: "Completed",
-    completed: true,
-    color: "bg-[#d6b7bd]",
-    initials: "MI",
-  },
-];
-
-const members = [
-  { name: "Dora", tasks: 2, color: "bg-[#f1c99b]", initials: "DO" },
-  { name: "Pablo", tasks: 1, color: "bg-[#b8cdb5]", initials: "PA" },
-  { name: "Mina", tasks: 1, color: "bg-[#d6b7bd]", initials: "MI" },
-];
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
+}
 
 function ClipboardIcon() {
   return (
@@ -98,16 +49,31 @@ function CheckIcon() {
 }
 
 export default function Home() {
-  const [tasks, setTasks] = useState(initialTasks);
-  const completedTasks = tasks.filter((task) => task.completed).length;
-  const progress = Math.round((completedTasks / tasks.length) * 100);
+  const [tasks, setTasks] = useState<Task[]>(sampleTasks);
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const members = sampleMembers.filter((member) => member.meetingId === sampleMeeting.id);
+  const completedTasks = tasks.filter((task) => task.status === "done").length;
+  const progress = tasks.length ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
-  function toggleTask(id: number) {
+  function toggleTask(id: string) {
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
+        task.id === id ? { ...task, status: task.status === "done" ? "open" : "done", updatedAt: new Date().toISOString() } : task,
       ),
     );
+  }
+
+  function addTask(task: { title: string; ownerId: string; dueDate: string }) {
+    const now = new Date().toISOString();
+    setTasks((currentTasks) => [...currentTasks, {
+      ...task,
+      id: crypto.randomUUID(),
+      meetingId: sampleMeeting.id,
+      status: "open",
+      createdAt: now,
+      updatedAt: now,
+    }]);
+    setIsAddingTask(false);
   }
 
   return (
@@ -128,6 +94,9 @@ export default function Home() {
           </div>
         </header>
 
+        {isAddingTask ? (
+          <AddTaskForm members={members} onCancel={() => setIsAddingTask(false)} onSave={addTask} />
+        ) : (
         <div className="grid gap-8 pt-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12 lg:pt-12">
           <section>
             <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -137,9 +106,9 @@ export default function Home() {
                   Upcoming studio event
                 </div>
                 <h1 className="text-3xl font-semibold tracking-[-0.04em] text-[#24352f] sm:text-4xl">
-                  Open Studio
+                  {sampleMeeting.title}
                 </h1>
-                <p className="mt-2 text-sm text-[#718078]">Saturday, November 16, 2026 · 6:00 PM</p>
+                {sampleMeeting.eventDate && <p className="mt-2 text-sm text-[#718078]">{formatDate(sampleMeeting.eventDate)}</p>}
               </div>
               <Button variant="outline" className="h-11 gap-2 rounded-xl border-[#cfdad2] bg-white px-4 text-[#36564b] shadow-sm hover:border-[#9db6a8] hover:bg-[#f4f8f5]">
                 <span className="size-4"><LinkIcon /></span>
@@ -169,7 +138,7 @@ export default function Home() {
                 <h2 className="text-lg font-semibold tracking-[-0.02em]">All tasks</h2>
                 <p className="mt-1 text-sm text-[#718078]">Everyone can see what still needs doing.</p>
               </div>
-              <Button size="icon" className="size-10 rounded-xl bg-[#2f6555] text-white shadow-sm hover:bg-[#245345]" aria-label="Add task">
+              <Button size="icon" className="size-10 rounded-xl bg-[#2f6555] text-white shadow-sm hover:bg-[#245345]" aria-label="Add task" onClick={() => setIsAddingTask(true)}>
                 <span className="size-5"><PlusIcon /></span>
               </Button>
             </div>
@@ -189,27 +158,26 @@ export default function Home() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className={`size-6 rounded-lg ${task.completed ? "border-[#3e7a61] bg-[#3e7a61] text-white hover:bg-[#3e7a61] hover:text-white" : "border-[#b8c7bd] bg-white text-transparent hover:border-[#3e7a61] hover:bg-white hover:text-transparent"}`}
+                          className={`size-6 rounded-lg ${task.status === "done" ? "border-[#3e7a61] bg-[#3e7a61] text-white hover:bg-[#3e7a61] hover:text-white" : "border-[#b8c7bd] bg-white text-transparent hover:border-[#3e7a61] hover:bg-white hover:text-transparent"}`}
                           onClick={() => toggleTask(task.id)}
-                          aria-label={`${task.completed ? "Mark" : "Complete"} ${task.title}`}
-                          aria-pressed={task.completed}
+                          aria-label={`${task.status === "done" ? "Mark open" : "Complete"} ${task.title}`}
+                          aria-pressed={task.status === "done"}
                         >
                           <span className="size-4"><CheckIcon /></span>
                         </Button>
-                        <span className={`truncate text-sm font-medium ${task.completed ? "text-[#92a098] line-through" : "text-[#2e4138]"}`}>{task.title}</span>
+                        <span className={`truncate text-sm font-medium ${task.status === "done" ? "text-[#92a098] line-through" : "text-[#2e4138]"}`}>{task.title}</span>
                       </div>
                       <div className="flex items-center gap-2 pl-9 text-sm text-[#63736b] sm:pl-0">
-                        <span className={`flex size-7 items-center justify-center rounded-full text-[10px] font-semibold text-[#36564b] ${task.color}`}>{task.initials}</span>
-                        <span>{task.owner}</span>
+                        <span>{members.find((member) => member.id === task.ownerId)?.displayName ?? "Unknown member"}</span>
                       </div>
-                      <div className={`pl-9 text-xs sm:pl-0 ${task.completed ? "text-[#8b9991]" : task.due === "Nov 12" ? "font-semibold text-[#c47a36]" : "text-[#718078]"}`}>
-                        <span className="sm:hidden">Due · </span>{task.due}
+                      <div className={`pl-9 text-xs sm:pl-0 ${task.status === "done" ? "text-[#8b9991]" : "text-[#718078]"}`}>
+                        <span className="sm:hidden">Due · </span>{formatDate(task.dueDate)}
                       </div>
-                      <span className={`hidden text-right text-xs sm:block ${task.completed ? "text-[#3e7a61]" : "text-[#9aa69f]"}`}>
-                        {task.completed ? "Done" : "Open"}
+                      <span className={`hidden text-right text-xs sm:block ${task.status === "done" ? "text-[#3e7a61]" : "text-[#9aa69f]"}`}>
+                        {task.status === "done" ? "Done" : "Open"}
                       </span>
                     </div>
-                    <p className={`pl-14 pb-3 text-xs sm:hidden ${task.completed ? "text-[#3e7a61]" : task.due === "Nov 12" ? "text-[#c47a36]" : "text-[#9aa69f]"}`}>{task.dueLabel}</p>
+                    <p className={`pl-14 pb-3 text-xs sm:hidden ${task.status === "done" ? "text-[#3e7a61]" : "text-[#9aa69f]"}`}>{task.status === "done" ? "Done" : "Open"}</p>
                   </li>
                 ))}
               </ul>
@@ -229,12 +197,12 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 {members.map((member) => (
-                  <div className="flex items-center justify-between rounded-xl border border-[#e0e5e1] bg-white px-4 py-3" key={member.name}>
+                  <div className="flex items-center justify-between rounded-xl border border-[#e0e5e1] bg-white px-4 py-3" key={member.id}>
                     <div className="flex items-center gap-3">
-                      <span className={`flex size-9 items-center justify-center rounded-full text-xs font-semibold text-[#36564b] ${member.color}`}>{member.initials}</span>
-                      <span className="text-sm font-medium text-[#35473e]">{member.name}</span>
+                      <span className="flex size-9 items-center justify-center rounded-full bg-[#e6ede8] text-xs font-semibold text-[#36564b]">{member.displayName.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</span>
+                      <span className="text-sm font-medium text-[#35473e]">{member.displayName}</span>
                     </div>
-                    <span className="text-xs text-[#8a9790]">{member.tasks} {member.tasks === 1 ? "task" : "tasks"}</span>
+                    <span className="text-xs text-[#8a9790]">{tasks.filter((task) => task.ownerId === member.id).length} {tasks.filter((task) => task.ownerId === member.id).length === 1 ? "task" : "tasks"}</span>
                   </div>
                 ))}
               </div>
@@ -250,6 +218,7 @@ export default function Home() {
             </div>
           </aside>
         </div>
+        )}
       </div>
     </main>
   );

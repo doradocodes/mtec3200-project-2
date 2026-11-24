@@ -9,3 +9,5 @@
   component while retaining their existing styles and task toggle behavior.
 - **2026-11-24:** Added typed fictional meeting, member, and task sample data
   with field descriptions and both open and completed tasks.
+- **2026-11-24:** Added the task form and connected the meeting board to sample
+  data; tasks can be added in memory for the current page session.
